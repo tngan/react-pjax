@@ -50,26 +50,28 @@ var pjax = function(options) {
             req.isPjax = false;
         }
 
-        res.pjaxJson = function(reactElement, reactState, meta) {
-            res.setHeader('Content-Type', 'application/json');
-            res.send(metaBuilder(reactElement, {
-                isPjax: req.isPjax,
-                reactState: reactState || '',
-                reactStateTag: reactStateTag,
-                reactMarkupTag: reactMarkupTag,
-                meta: meta || {}
-            }));
-        };
-
-        res.pjaxRender = function(view, reactElement, reactState, meta) {
-            res.render(view, metaBuilder(reactElement, {
-                isPjax: req.isPjax,
-                reactState: reactState || '',
-                reactStateTag: reactStateTag,
-                reactMarkupTag: reactMarkupTag,
-                meta: meta || {},
-                isJSON: false
-            }));
+        res.pjaxRender = function(view, meta, reactElement, reactState){
+            if(reactElement===undefined){
+                if(req.isPjax){
+                    res.setHeader('Content-Type', 'application/json');
+                    res.send(JSON.stringify(meta));
+                } else {
+                    res.render(view, meta);
+                }
+            } else {
+                var _basicMeta = {
+                    isPjax: req.isPjax,
+                    reactState: reactState || '',
+                    reactStateTag: reactStateTag,
+                    reactMarkupTag: reactMarkupTag,
+                    meta: meta || {}
+                };
+                if(req.isPjax){
+                    res.send(metaBuilder(reactElement, _basicMeta));
+                } else {
+                    res.render(view, metaBuilder(reactElement, merge(_basicMeta,{isJSON:false})));
+                }
+            }
         };
 
         next();

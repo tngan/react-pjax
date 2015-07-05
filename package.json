@@ -1,6 +1,6 @@
 {
   "name": "react-pjax",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "PJAX implementation with ReactJS",
   "main": "index.js",
   "author": "tngan",

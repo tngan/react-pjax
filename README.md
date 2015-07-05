@@ -15,7 +15,21 @@ This module provides a solution for how to use PJAX with ReactJS, when a request
 $ npm install react-pjax
 ```
 
-## API
+## API v2.0
+
+Integrate res.pjaxJson and res.pjaxRender in version 1.0.
+
+#### res.pjaxRender(view,meta)
+
+If custom PJAX header exists, it returns JSON. Otherwise it applies classic res.render(view,meta).
+
+#### res.pjaxRender(view,meta,reactElement,reactState)
+
+If custom PJAX header exists, a JSON merged meta with reactState will be returned. Otherwise, it renders the specified view with passing markup and state, sends the rendered HTML to client side.
+
+#### [Deprecated] res.pjaxJson(reactElement,reactState,meta)
+
+## API v1.0
 
 ```javascript
 var reactPjax = require('react-pjax');
@@ -63,7 +77,7 @@ Meta is an object with properties. (e.g. title)
 
 #### res.pjaxRender(view,reactElement,reactState,meta)
 
-Render your view with passing markup and state, sends the rendered HTML to client side.
+Render your view with passing markup and state, sends the rendered HTML to client side. (Deprecated since v2.0)
 
 ##### view
 
@@ -97,6 +111,7 @@ app.use(reactPjax({
 ```js
 var MyReactElement = React.createFactory(require('MyReactComponent'));
 
+/*API v1.0*/
 app.get('/', function(req, res) {
     res.pjaxRender('index', MyReactElement, myReactState, {
         title: 'home'
@@ -107,6 +122,18 @@ app.get('/json', function(req, res) {
     res.pjaxJson(MyReactElement, myReactState, {
         foo: 'bar'
     });
+});
+/*API v2.0*/
+app.get('/', function(req, res) {
+    res.pjaxRender('index', {
+        title: 'home'
+    }, MyReactElement, myReactState);
+});
+
+app.get('/json', function(req, res) {
+    res.pjaxRender('index', {
+        foo: 'bar'
+    }, MyReactElement, myReactState);
 });
 ```
 
